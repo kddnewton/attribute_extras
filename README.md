@@ -30,7 +30,7 @@ p.name # => 'value'
 
 ### truncate_attributes
 
-Causes string attribute assignment to be truncated down to the maximum allowed value for that column. If `whiny` is set the to, instead adds a length validator on that attribute to cause it to error if saved.
+Causes string attribute assignment to be truncated down to the maximum allowed value for that column. If `whiny` is set to true, instead adds a length validator on that attribute to cause it to error if saved.
 
 ```ruby
 class Person < ActiveRecord::Base
