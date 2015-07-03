@@ -9,10 +9,7 @@ Gem::Specification.new do |s|
   s.email       = ['kevin.deisz@gmail.com']
   s.homepage    = 'https://github.com/kddeisz/attribute_extras'
   s.summary     = 'Extra macros for auto attribute manipulation.'
-  s.description = <<-MSG.squish
-    Overrides writers methods on ActiveRecord classes to allow for
-    different behavior such as nullifying, stripping, and truncating.
-  MSG
+  s.description = 'Overrides writers methods on ActiveRecord classes to allow for different behavior such as nullifying, stripping, and truncating.'
   s.license     = 'MIT'
 
   s.files = Dir['lib/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
