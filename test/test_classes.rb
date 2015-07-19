@@ -1,16 +1,15 @@
 COLUMN_LIMIT = 255
+NUMBERS = %w[one two three four]
 
 ActiveRecord::Schema.define do
   create_table :people, force: true do |t|
-    t.string :nullified_name
-    t.string :other_nullified_name
-
-    t.string :stripped_name
-    t.string :other_stripped_name
-
-    t.string :truncated_name, limit: COLUMN_LIMIT
-    t.string :truncated_whiny_name, limit: COLUMN_LIMIT
-    t.string :other_truncated_name, limit: COLUMN_LIMIT
+    %w[nullified stripped truncated].each do |prefix|
+      options = (prefix == 'truncated') ? { limit: COLUMN_LIMIT } : {}
+      NUMBERS.each do |number|
+        t.string "person_#{prefix}_#{number}", options
+      end
+      t.string "architect_#{prefix}", options
+    end
   end
 
   create_table :addresses, force: true do |t|
@@ -20,30 +19,41 @@ ActiveRecord::Schema.define do
 end
 
 class Person < ActiveRecord::Base
-  nullify_attributes :nullified_name
-  strip_attributes :stripped_name
-  truncate_attributes :truncated_name
-  truncate_attributes :truncated_whiny_name, whiny: true
+
+  { nullified: :nullify_attributes, stripped: :strip_attributes, truncated: :truncate_attributes }.each do |prefix, macro|
+    NUMBERS.each_with_index do |number, index|
+      send(macro, "person_#{prefix}_#{number}".to_sym, validator: (index / 2).even?, writer: (index % 2))
+    end
+  end
 
   def set_blank_attributes
-    write_attribute(:nullified_name, '   ')
-    save
+    NUMBERS.each do |number|
+      write_attribute("person_nullified_#{number}", '   ')
+    end
+    save(validate: false)
   end
 
   def set_long_attributes
-    write_attribute(:truncated_name, self.class.long_value)
-    write_attribute(:truncated_whiny_name, self.class.long_value)
+    NUMBERS.each do |number|
+      write_attribute("person_truncated_#{number}", self.class.long_value)
+    end
     save(validate: false)
   end
 
   def set_padded_attributes
-    write_attribute(:stripped_name, '  test value  ')
-    save
+    NUMBERS.each do |number|
+      write_attribute("person_stripped_#{number}", '  test value  ')
+    end
+    save(validate: false)
   end
 
   class << self
     def short_value
       @short_value ||= ('a' * COLUMN_LIMIT)
+    end
+
+    def stripped_value
+      @stripped_value ||= 'test value'
     end
 
     def long_value
@@ -55,26 +65,22 @@ end
 class Developer < Person; end
 
 class Architect < Developer
-  nullify_attributes :other_nullified_name
-  strip_attributes :other_stripped_name
-  truncate_attributes :other_truncated_name
+  nullify_attributes :architect_nullified
+  strip_attributes :architect_stripped
+  truncate_attributes :architect_truncated
 
   def set_blank_attributes
-    write_attribute(:nullified_name, '   ')
-    write_attribute(:other_nullified_name, '   ')
-    save
+    write_attribute(:architect_nullified, '   ')
+    super
   end
 
   def set_long_attributes
-    write_attribute(:truncated_name, self.class.long_value)
-    write_attribute(:truncated_whiny_name, self.class.long_value)
-    write_attribute(:other_truncated_name, self.class.long_value)
-    save
+    write_attribute(:architect_truncated, self.class.long_value)
+    super
   end
 
   def set_padded_attributes
-    write_attribute(:stripped_name, '  test value  ')
-    write_attribute(:other_stripped_name, '  test value  ')
-    save
+    write_attribute(:architect_stripped, '  test value  ')
+    super
   end
 end

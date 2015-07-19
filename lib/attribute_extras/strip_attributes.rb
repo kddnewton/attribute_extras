@@ -1,6 +1,8 @@
 module AttributeExtras
   module StripAttributes
 
+    REGEXP = /\A\s+|\s+\z/.freeze
+
     extend ActiveSupport::Concern
 
     module ClassMethods
@@ -27,13 +29,13 @@ module AttributeExtras
     # calls set_stripped_attributes then save
     def strip_attributes
       set_stripped_attributes
-      self.save if self.changed?
+      self.changed? ? self.save : true
     end
 
     # calls set_stripped_attributes then save!
     def strip_attributes!
       set_stripped_attributes
-      self.save! if self.changed?
+      self.changed? ? self.save! : true
     end
 
     private
@@ -41,8 +43,8 @@ module AttributeExtras
       # apply the strip to each specified stripped attribute
       def set_stripped_attributes
         self.class.inherited_stripped_attributes.each do |modifier|
-          attribute = modifier.attribute
-          self.send("#{attribute}=", self.send(attribute))
+          value = self.send(modifier.attribute)
+          self.send("#{modifier.attribute}=", value.is_a?(String) ? value.strip : value)
         end
       end
   end

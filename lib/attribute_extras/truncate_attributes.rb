@@ -27,13 +27,13 @@ module AttributeExtras
     # calls set_truncated_attributes then save
     def truncate_attributes
       set_truncated_attributes
-      self.save if self.changed?
+      self.changed? ? self.save : true
     end
 
     # calls set_truncated_attributes then save!
     def truncate_attributes!
       set_truncated_attributes
-      self.save! if self.changed?
+      self.changed? ? self.save! : true
     end
 
     private
@@ -41,12 +41,8 @@ module AttributeExtras
       # apply the truncation to each specified truncated attribute
       def set_truncated_attributes
         self.class.inherited_truncated_attributes.each do |modifier|
-          attribute = modifier.attribute
-          if modifier.options[:limit]
-            self.send("#{attribute}=", self.send(attribute)[0...modifier.options[:limit]])
-          else
-            self.send("#{attribute}=", self.send(attribute))
-          end
+          value = self.send(modifier.attribute)
+          self.send("#{modifier.attribute}=", value.is_a?(String) ? value[0...modifier.options[:limit]] : value)
         end
       end
   end

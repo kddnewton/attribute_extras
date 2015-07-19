@@ -41,15 +41,6 @@ class BaseExtensionsTest < ActiveSupport::TestCase
     assert_includes klass.instance_method(:first_line=).source_location.first, 'attribute_extras/base_extensions'
   end
 
-  def test_truncate_attributes_success_whiny
-    klass = address_class(:truncate_attributes, :first_line, :second_line, whiny: true)
-    assert_equal klass.truncated_attributes.map(&:attribute), [:first_line, :second_line]
-
-    validator = klass.validators_on(:first_line).first
-    assert_kind_of ActiveModel::Validations::LengthValidator, validator
-    assert_equal validator.options[:maximum], COLUMN_LIMIT
-  end
-
   private
 
     # returns a newly created address class

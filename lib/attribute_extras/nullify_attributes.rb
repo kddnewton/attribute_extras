@@ -1,6 +1,8 @@
 module AttributeExtras
   module NullifyAttributes
 
+    REGEXP = /\A\s*\z/.freeze
+
     extend ActiveSupport::Concern
 
     module ClassMethods
@@ -27,13 +29,13 @@ module AttributeExtras
     # calls set_nullified_attributes then save
     def nullify_attributes
       set_nullified_attributes
-      self.save if self.changed?
+      self.changed? ? self.save : true
     end
 
     # calls set_nullified_attributes then save!
     def nullify_attributes!
       set_nullified_attributes
-      self.save! if self.changed?
+      self.changed? ? self.save! : true
     end
 
     private
@@ -42,7 +44,7 @@ module AttributeExtras
       def set_nullified_attributes
         self.class.inherited_nullified_attributes.each do |modifier|
           attribute = modifier.attribute
-          self.send("#{attribute}=", self.send(attribute))
+          self.send("#{attribute}=", self.send(attribute).presence)
         end
       end
   end
