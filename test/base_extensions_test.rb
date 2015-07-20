@@ -12,7 +12,6 @@ class BaseExtensionsTest < ActiveSupport::TestCase
   def test_nullify_attributes_success
     klass = address_class(:nullify_attributes, :first_line, :second_line)
     assert_equal klass.nullified_attributes.map(&:attribute), [:first_line, :second_line]
-    assert_includes klass.instance_method(:first_line=).source_location.first, 'attribute_extras/base_extensions'
   end
 
   def test_strip_attributes_failure
@@ -25,7 +24,6 @@ class BaseExtensionsTest < ActiveSupport::TestCase
   def test_strip_attributes_success
     klass = address_class(:strip_attributes, :first_line, :second_line)
     assert_equal klass.stripped_attributes.map(&:attribute), [:first_line, :second_line]
-    assert_includes klass.instance_method(:first_line=).source_location.first, 'attribute_extras/base_extensions'
   end
 
   def test_truncate_attributes_failure
@@ -38,7 +36,6 @@ class BaseExtensionsTest < ActiveSupport::TestCase
   def test_truncate_attributes_success
     klass = address_class(:truncate_attributes, :first_line, :second_line)
     assert_equal klass.truncated_attributes.map(&:attribute), [:first_line, :second_line]
-    assert_includes klass.instance_method(:first_line=).source_location.first, 'attribute_extras/base_extensions'
   end
 
   private
