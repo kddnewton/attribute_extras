@@ -1,4 +1,3 @@
-require 'attribute_extras/base_extensions'
 require 'attribute_extras/extra_builder'
 require 'attribute_extras/hook_builder'
 require 'attribute_extras/modifier'
