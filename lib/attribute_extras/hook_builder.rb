@@ -1,4 +1,10 @@
 module AttributeExtras
+
+  # Builds a module that extends ActiveRecord::Base to build the macro
+  # corresponding to the given verb. For instance, for the verb :nullify,
+  # it will build a module that extends AR::Base with the method
+  # :nullify_attributes, which is then used to include the concern from
+  # the ExtraBuilder.
   class HookBuilder
 
     # store the given options

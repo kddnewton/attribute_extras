@@ -2,6 +2,7 @@ require 'attribute_extras/extra_builder'
 require 'attribute_extras/hook_builder'
 require 'attribute_extras/modifier'
 
+# Used for automatic attribute manipulation
 module AttributeExtras
 
   # the registered extras

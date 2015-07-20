@@ -3,6 +3,7 @@ PATH
   specs:
     attribute_extras (0.1.2)
       activerecord (> 3)
+      activesupport (> 3)
 
 GEM
   remote: https://rubygems.org/

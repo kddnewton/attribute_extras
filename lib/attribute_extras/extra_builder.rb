@@ -1,4 +1,9 @@
 module AttributeExtras
+
+  # Builds a concern that will be included into classes when they call
+  # the macro corresponding to the given verb. For instance, for the verb
+  # :nullify it will build out AttributeExtras::NullifyAttributes, which
+  # can be included into classes to get all of the utility functions.
   class ExtraBuilder
 
     # store the given options
