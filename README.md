@@ -100,6 +100,6 @@ In this case the options is needed to build a hash of metadata about the attribu
 
 Contributions welcome! Please submit a pull request with tests.
 
-### Licence
+### License
 
-MIT Licence.
+MIT License.
