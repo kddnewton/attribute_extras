@@ -1,6 +1,6 @@
 ## AttributeExtras
 
-Use this gem for automatic behavior on attributes. It by default provides three class macros that can be used for managing attributes. You can also build your own macros that will automatically become available to you within your ActiveRecord models.
+Use this gem for automatic behavior on attributes. It by default provides three class macros that can be used for managing attributes. You can also build your own macros that will automatically become available to you within your ActiveRecord models. By default each macro gets the options `:validator` and `:writer` and both are set to true. If you do not want the macros to validate or overwrite the attribute writers, you can pass false to those options.
 
 ### nullify_attributes
 
@@ -30,17 +30,15 @@ p.name # => 'value'
 
 ### truncate_attributes
 
-Causes string attribute assignment to be truncated down to the maximum allowed value for that column. If `whiny` is set to true, instead adds a length validator on that attribute to cause it to error if saved.
+Causes string attribute assignment to be truncated down to the maximum allowed value for that column.
 
 ```ruby
 class Person < ActiveRecord::Base
-  truncate_attributes :first_name
-  truncate_attributes :last_name, whiny: true
+  truncate_attributes :name
 end
 
-p = Person.new(first_name: 'a' * 500, last_name: 'a' * 500)
-p.first_name # => 'a' * limit
-p.save! # => ActiveRecord::RecordInvalid: Validation failed
+p = Person.new(name: 'a' * 500)
+p.name # => 'a' * limit
 ```
 
 ### Inheritance
