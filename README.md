@@ -74,18 +74,22 @@ If you want to register your own macros, you can do so with `AttributeExtras.reg
 ### `:nullify` Example
 
 ```ruby
-self.register_extra :nullify, ->(value, options){ value.presence },
-  past: :nullified,
-  validator: { format: { allow_nil: true, without: /\A\s*\z/ } }
+AttributeExtras.configure do |config|
+  config.register_extra :nullify, ->(value, options){ value.presence },
+    past: :nullified,
+    validator: { format: { allow_nil: true, without: /\A\s*\z/ } }
+end
 ```
 
 ### `:truncate` Example
 
 ```ruby
-self.register_extra :truncate, ->(value, options){ value.is_a?(String) ? value[0...options[:limit]] : value },
-  past: :truncated,
-  validator: ->(options){ { length: { maximum: options[:limit] } } },
-  options: ->(attribute){ { limit: self.columns_hash[attribute.to_s].limit } }
+AttributeExtras.configure do |config|
+  config.register_extra :truncate, ->(value, options){ value.is_a?(String) ? value[0...options[:limit]] : value },
+    past: :truncated,
+    validator: ->(options){ { length: { maximum: options[:limit] } } },
+    options: ->(attribute){ { limit: self.columns_hash[attribute.to_s].limit } }
+end
 ```
 
 In this case the options is needed to build a hash of metadata about the attribute in question so that the validator option can change. The options hash is also passed in to the `truncate_attribute_extra` method so that you have access to that metadata.

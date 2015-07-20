@@ -9,6 +9,11 @@ module AttributeExtras
   mattr_accessor :extras
   self.extras = []
 
+  # wrap up configuration options into one block
+  def self.configure(&block)
+    yield self
+  end
+
   # register the extra and build the functions
   def self.register_extra(verb, function, past:, validator:, options: nil)
     past ||= verb
