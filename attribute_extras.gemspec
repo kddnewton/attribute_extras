@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email       = ['info@trialnetworks.com']
   s.homepage    = 'https://github.com/drugdev/attribute_extras'
   s.summary     = 'Extra macros for auto attribute manipulation.'
-  s.description = 'Overrides writers methods on ActiveRecord classes to allow for different behavior such as nullifying, stripping, and truncating.'
+  s.description = 'Builds macros to automatically manipulate your models\' attributes.'
   s.license     = 'MIT'
 
   s.files = Dir['lib/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
