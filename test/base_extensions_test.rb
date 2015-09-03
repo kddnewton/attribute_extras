@@ -2,10 +2,9 @@ require 'test_helper'
 
 class BaseExtensionsTest < ActiveSupport::TestCase
 
-  def test_nullify_attributes_failure
-    assert_raises ArgumentError do
-      klass = address_class(:nullify_attributes, :first_line, :second_line, :third_line)
-      assert_not klass.respond_to?(:nullified_attributes)
+  def test_nullify_attributes_warns
+    assert_output_matches 'Invalid attributes' do
+      address_class(:nullify_attributes, :first_line, :second_line, :third_line)
     end
   end
 
@@ -14,23 +13,15 @@ class BaseExtensionsTest < ActiveSupport::TestCase
     assert_equal klass.nullified_attributes.map(&:attribute), [:first_line, :second_line]
   end
 
-  def test_strip_attributes_failure
-    assert_raises ArgumentError do
-      klass = address_class(:strip_attributes, :first_line, :second_line, :third_line)
-      assert_not klass.respond_to?(:stripped_attributes)
+  def test_strip_attributes_warns
+    assert_output_matches 'Invalid attributes' do
+      address_class(:strip_attributes, :first_line, :second_line, :third_line)
     end
   end
 
   def test_strip_attributes_success
     klass = address_class(:strip_attributes, :first_line, :second_line)
     assert_equal klass.stripped_attributes.map(&:attribute), [:first_line, :second_line]
-  end
-
-  def test_truncate_attributes_failure
-    assert_raises ArgumentError do
-      klass = address_class(:truncate_attributes, :first_line, :second_line, :third_line)
-      assert_not klass.respond_to?(:truncated_attributes)
-    end
   end
 
   def test_truncate_attributes_success
@@ -48,4 +39,14 @@ class BaseExtensionsTest < ActiveSupport::TestCase
       end
     end
 
+    # assert that the output to $stderr matches the expected
+    def assert_output_matches(expected)
+      stderr = $stderr
+      $stderr = StringIO.new
+      AttributeExtras.instance_variable_set(:@logger, Logger.new($stderr))
+      yield
+      assert_match expected, $stderr.string
+    ensure
+      $stderr = stderr
+    end
 end

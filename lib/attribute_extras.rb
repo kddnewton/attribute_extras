@@ -1,6 +1,7 @@
 require 'attribute_extras/extra_builder'
 require 'attribute_extras/hook_builder'
 require 'attribute_extras/modifier'
+require 'logger'
 
 # Used for automatic attribute manipulation
 module AttributeExtras
@@ -12,6 +13,11 @@ module AttributeExtras
   # wrap up configuration options into one block
   def self.configure(&block)
     yield self
+  end
+
+  # the logger for attribute extras
+  def self.logger
+    @logger ||= Logger.new($stderr)
   end
 
   # register the extra and build the functions
