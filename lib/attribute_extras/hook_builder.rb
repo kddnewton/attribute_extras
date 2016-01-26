@@ -28,6 +28,7 @@ module AttributeExtras
           def #{@verb}_attributes(*attributes, validator: true, writer: true)
             if self.table_exists? && (non_attributes = attributes.map(&:to_s) - self.column_names).any?
               AttributeExtras.logger.warn("Invalid attributes passed to #{@verb}_attributes: \#{non_attributes.join(', ')}")
+              return
             end
 
             include ::AttributeExtras::#{@verb.capitalize}Attributes
