@@ -1,6 +1,24 @@
-## AttributeExtras
+# AttributeExtras
 
-Use this gem for automatic behavior on attributes. It by default provides three class macros that can be used for managing attributes. You can also build your own macros that will automatically become available to you within your ActiveRecord models. By default each macro gets the options `:validator` and `:writer` and both are set to true. If you do not want the macros to validate or overwrite the attribute writers, you can pass false to those options.
+Use this gem for automatic behavior on attributes. It provides three class macros that can be used for managing attributes: `nullify_attributes`, `strip_attributes`, and `truncate_attributes`.
+
+## Installation
+
+Add this line to your application's Gemfile:
+
+```ruby
+gem 'attribute_extras'
+```
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install attribute_extras
+
+## Usage
 
 ### nullify_attributes
 
@@ -11,8 +29,8 @@ class Person < ActiveRecord::Base
   nullify_attributes :name
 end
 
-p = Person.new(name: '   ')
-p.name # => nil
+person = Person.create(name: '   ')
+person.name # => nil
 ```
 
 ### strip_attributes
@@ -24,8 +42,8 @@ class Person < ActiveRecord::Base
   strip_attributes :name
 end
 
-p = Person.new(name: '   value   ')
-p.name # => 'value'
+person = Person.create(name: '   value   ')
+person.name # => 'value'
 ```
 
 ### truncate_attributes
@@ -37,69 +55,20 @@ class Person < ActiveRecord::Base
   truncate_attributes :name
 end
 
-p = Person.new(name: 'a' * 500)
-p.name # => 'a' * limit
+person = Person.new(name: 'a' * 500)
+person.name # => 'a' * limit
 ```
 
-### Inheritance
+## Development
 
-By default, attributes that you manipulate with any of the above macros will be inherited into the subclasses.
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-### Other methods
+To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
-For migrating values to the correct format specified, there are two methods for each macro that will enforce the format. For example, for the `nullify_attributes` macro there is the `nullify_attributes` instance method and the `nullify_attributes!` instance method. Both will set the correct values and then call their respective `save`.
+## Contributing
 
-For introspection, there are two methods for each macro supplied. For example, for the `nullify_attributes` macro there is the `nullified_attributes` method and the `inherited_nullified_attributes` method. Examples below:
+Bug reports and pull requests are welcome on GitHub at https://github.com/kddeisz/attribute_extras.
 
-```ruby
-class Person < ActiveRecord::Base
-  nullify_attributes :name
-end
+## License
 
-class Developer < Person
-  nullify_attributes :email
-end
-
-Person.nullified_attributes.map(&:attribute) # => [:name]
-Person.inherited_nullified_attributes.map(&:attribute) # => [:name]
-
-Developer.nullified_attributes.map(&:attribute) # => [:email]
-Developer.inherited_nullified_attributes.map(&:attribute) # => [:email, :name]
-```
-
-## Internals
-
-If you want to register your own macros, you can do so with `AttributeExtras.register_extra`. Internally `attribute_extras` does this for the three macros listed above.
-
-### `:nullify` Example
-
-```ruby
-AttributeExtras.configure do |config|
-  config.register_extra :nullify, ->(value, options){ value.presence },
-    past: :nullified,
-    validator: { format: { allow_nil: true, without: /\A\s*\z/ } }
-end
-```
-
-### `:truncate` Example
-
-```ruby
-AttributeExtras.configure do |config|
-  config.register_extra :truncate, ->(value, options){ value.is_a?(String) ? value[0...options[:limit]] : value },
-    past: :truncated,
-    validator: ->(options){ { length: { maximum: options[:limit] } } },
-    options: ->(attribute){ { limit: self.columns_hash[attribute.to_s].limit } }
-end
-```
-
-In this case the options is needed to build a hash of metadata about the attribute in question so that the validator option can change. The options hash is also passed in to the `truncate_attribute_extra` method so that you have access to that metadata.
-
-## Additional information
-
-### Contributing
-
-Contributions welcome! Please submit a pull request with tests.
-
-### License
-
-MIT License.
+The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

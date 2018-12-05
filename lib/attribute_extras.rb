@@ -1,50 +1,87 @@
-require 'attribute_extras/extra_builder'
-require 'attribute_extras/hook_builder'
-require 'attribute_extras/modifier'
-require 'logger'
+# frozen_string_literal: true
 
-# Used for automatic attribute manipulation
+require 'attribute_extras/version'
+
+# Extra macros for auto attribute manipulation.
 module AttributeExtras
+  class NullifyAttributes < Module
+    attr_reader :attributes
 
-  # the registered extras
-  mattr_accessor :extras
-  self.extras = []
+    def initialize(attributes)
+      @attributes = attributes
+    end
 
-  # wrap up configuration options into one block
-  def self.configure(&block)
-    yield self
+    def included(base)
+      nullified_attributes = attributes
+
+      base.before_validation do
+        nullified_attributes.each do |attribute|
+          value = public_send(attribute)
+
+          public_send(:"#{attribute}=", value.presence)
+        end
+      end
+    end
   end
 
-  # the logger for attribute extras
-  def self.logger
-    @logger ||= Logger.new($stderr)
+  class StripAttributes < Module
+    attr_reader :attributes
+
+    def initialize(attributes)
+      @attributes = attributes
+    end
+
+    def included(base)
+      stripped_attributes = attributes
+
+      base.before_validation do
+        stripped_attributes.each do |attribute|
+          value = public_send(attribute)
+          stripped = value.is_a?(String) ? value.strip : value
+
+          public_send(:"#{attribute}=", stripped)
+        end
+      end
+    end
   end
 
-  # register the extra and build the functions
-  def self.register_extra(verb, function, past:, validator:, options: nil)
-    past ||= verb
-    compiled_validator = validator.is_a?(Proc) ? validator : ->(options){ validator }
-    options ||= ->(attribute){ {} }
+  class TruncateAttributes < Module
+    attr_reader :attributes
 
-    extra = ExtraBuilder.new(verb, past, function, compiled_validator, options).build
-    hook = HookBuilder.new(verb, past).build
+    def initialize(attributes)
+      @attributes = attributes
+    end
 
-    self.const_set(:"#{verb.capitalize}Attributes", extra)
-    self.extras << extra
-    ActiveRecord::Base.extend(hook)
+    def included(base)
+      truncated_attributes =
+        attributes.map do |attribute|
+          [attribute, base.columns_hash[attribute.to_s].limit]
+        end
+
+      base.before_validation do
+        truncated_attributes.each do |(attribute, limit)|
+          value = public_send(attribute)
+          truncated = value.is_a?(String) ? value[0...limit] : value
+
+          public_send(:"#{attribute}=", truncated)
+        end
+      end
+    end
   end
 
-  self.register_extra :nullify, ->(value, options){ value.presence },
-    past: :nullified,
-    validator: { format: { allow_nil: true, without: /\A\s*\z/ } }
+  module Hook
+    def nullify_attributes(*attributes)
+      include NullifyAttributes.new(attributes)
+    end
 
-  self.register_extra :strip, ->(value, options){ value.is_a?(String) ? value.strip : value },
-    past: :stripped,
-    validator: { format: { without: /\A\s+|\s+\z/ } }
+    def strip_attributes(*attributes)
+      include StripAttributes.new(attributes)
+    end
 
-  self.register_extra :truncate, ->(value, options){ value.is_a?(String) ? value[0...options[:limit]] : value },
-    past: :truncated,
-    validator: ->(options){ { length: { maximum: options[:limit] } } },
-    options: ->(attribute){ { limit: self.columns_hash[attribute.to_s].limit } }
-
+    def truncate_attributes(*attributes)
+      include TruncateAttributes.new(attributes)
+    end
+  end
 end
+
+ActiveRecord::Base.extend(AttributeExtras::Hook)
