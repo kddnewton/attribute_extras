@@ -1,50 +1,54 @@
-require 'attribute_extras/extra_builder'
-require 'attribute_extras/hook_builder'
-require 'attribute_extras/modifier'
-require 'logger'
+# frozen_string_literal: true
 
-# Used for automatic attribute manipulation
+require 'attribute_extras/version'
+
+# Extra macros for auto attribute manipulation.
 module AttributeExtras
+  # Parent class of the various extras.
+  class AttributeExtra < Module
+    attr_reader :name
 
-  # the registered extras
-  mattr_accessor :extras
-  self.extras = []
+    def initialize(name, attributes, perform)
+      @name = name
+      define_extra(name, attributes, perform)
+    end
 
-  # wrap up configuration options into one block
-  def self.configure(&block)
-    yield self
+    def included(clazz)
+      clazz.before_validation(name)
+    end
+
+    private
+
+    def define_extra(name, attributes, perform)
+      define_method(name) do
+        attributes.each do |attribute|
+          value = public_send(attribute)
+          public_send(:"#{attribute}=", perform[self, attribute, value])
+        end
+      end
+    end
   end
 
-  # the logger for attribute extras
-  def self.logger
-    @logger ||= Logger.new($stderr)
+  def self.define_extra(name, &perform)
+    extra = Class.new(AttributeExtra)
+    extra_name = name.to_s.gsub(/(?:\A|_)([a-z])/i) { $1.upcase }.to_sym
+
+    AttributeExtras.const_set(extra_name, extra)
+    ActiveRecord::Base.define_singleton_method(name) do |*attributes|
+      include extra.new(name, attributes, perform)
+    end
   end
 
-  # register the extra and build the functions
-  def self.register_extra(verb, function, past:, validator:, options: nil)
-    past ||= verb
-    compiled_validator = validator.is_a?(Proc) ? validator : ->(options){ validator }
-    options ||= ->(attribute){ {} }
-
-    extra = ExtraBuilder.new(verb, past, function, compiled_validator, options).build
-    hook = HookBuilder.new(verb, past).build
-
-    self.const_set(:"#{verb.capitalize}Attributes", extra)
-    self.extras << extra
-    ActiveRecord::Base.extend(hook)
+  define_extra :nullify_attributes do |*, value|
+    value.presence
   end
 
-  self.register_extra :nullify, ->(value, options){ value.presence },
-    past: :nullified,
-    validator: { format: { allow_nil: true, without: /\A\s*\z/ } }
+  define_extra :strip_attributes do |*, value|
+    value.is_a?(String) ? value.strip : value
+  end
 
-  self.register_extra :strip, ->(value, options){ value.is_a?(String) ? value.strip : value },
-    past: :stripped,
-    validator: { format: { without: /\A\s+|\s+\z/ } }
-
-  self.register_extra :truncate, ->(value, options){ value.is_a?(String) ? value[0...options[:limit]] : value },
-    past: :truncated,
-    validator: ->(options){ { length: { maximum: options[:limit] } } },
-    options: ->(attribute){ { limit: self.columns_hash[attribute.to_s].limit } }
-
+  define_extra :truncate_attributes do |record, attribute, value|
+    limit = record.class.columns_hash[attribute.to_s].limit
+    value.is_a?(String) ? value[0...limit] : value
+  end
 end

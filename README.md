@@ -1,105 +1,109 @@
-## AttributeExtras
+# AttributeExtras
 
-Use this gem for automatic behavior on attributes. It by default provides three class macros that can be used for managing attributes. You can also build your own macros that will automatically become available to you within your ActiveRecord models. By default each macro gets the options `:validator` and `:writer` and both are set to true. If you do not want the macros to validate or overwrite the attribute writers, you can pass false to those options.
+Use this gem for automatic behavior on attributes performed before validation. You can use the predefined macros or define your own.
 
-### nullify_attributes
+## Installation
 
-Causes attribute assignment to check for presence of the given value, and set the value accordingly.
+Add this line to your application's Gemfile:
+
+```ruby
+gem 'attribute_extras'
+```
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install attribute_extras
+
+## Usage
+
+`AttributeExtras` provides three extras that are predefined: `nullify_attributes`, `strip_attributes`, and `truncate_attributes`. You can use these methods to tell `AttributeExtras` to perform mutations before validation. Additionally, you can call these methods at any time to perform the mutation programmatically. Examples are below:
+
+### `ActiveRecord::Base::nullify_attributes`
+
+Sets the value to `nil` if the value is blank.
 
 ```ruby
 class Person < ActiveRecord::Base
   nullify_attributes :name
 end
 
-p = Person.new(name: '   ')
-p.name # => nil
+person = Person.create(name: '   ')
+person.name # => nil
+
+person = Person.new(name: '   ')
+person.nullify_attributes
+person.name # => nil
 ```
 
-### strip_attributes
+### `ActiveRecord::Base::strip_attributes`
 
-Causes string attribute assignment to strip the given value, and set the value accordingly.
+Strips the value.
 
 ```ruby
 class Person < ActiveRecord::Base
   strip_attributes :name
 end
 
-p = Person.new(name: '   value   ')
-p.name # => 'value'
+person = Person.create(name: '   value   ')
+person.name # => 'value'
+
+person = Person.new(name: '   value   ')
+person.strip_attributes
+person.name # => 'value'
 ```
 
-### truncate_attributes
+### `ActiveRecord::Base::truncate_attributes`
 
-Causes string attribute assignment to be truncated down to the maximum allowed value for that column.
+Truncates the value to the maximum length allowed by the column.
 
 ```ruby
 class Person < ActiveRecord::Base
   truncate_attributes :name
 end
 
-p = Person.new(name: 'a' * 500)
-p.name # => 'a' * limit
+person = Person.create(name: 'a' * 500)
+person.name # => 'a' * limit
+
+person = Person.new(name: 'a' * 500)
+person.truncate_attributes
+person.name # => 'a' * limit
 ```
 
-### Inheritance
+### `AttributeExtras::define_macro`
 
-By default, attributes that you manipulate with any of the above macros will be inherited into the subclasses.
-
-### Other methods
-
-For migrating values to the correct format specified, there are two methods for each macro that will enforce the format. For example, for the `nullify_attributes` macro there is the `nullify_attributes` instance method and the `nullify_attributes!` instance method. Both will set the correct values and then call their respective `save`.
-
-For introspection, there are two methods for each macro supplied. For example, for the `nullify_attributes` macro there is the `nullified_attributes` method and the `inherited_nullified_attributes` method. Examples below:
+You can define your own macros by using the `define_macro` method on the `AttributeExtras` module. `define_macro` a name for the macro and a block which itself accepts three arguments (the record being modified, the attribute being modified, and the value of the attribute). The block should return the modified value. An example would be:
 
 ```ruby
+AttributeExtras.define_macro :double_attributes do |_record, _attribute, value|
+  value * 2
+end
+
 class Person < ActiveRecord::Base
-  nullify_attributes :name
+  double_attributes :age
 end
 
-class Developer < Person
-  nullify_attributes :email
-end
+person = Person.create(age: 5)
+person.age # => 10
 
-Person.nullified_attributes.map(&:attribute) # => [:name]
-Person.inherited_nullified_attributes.map(&:attribute) # => [:name]
-
-Developer.nullified_attributes.map(&:attribute) # => [:email]
-Developer.inherited_nullified_attributes.map(&:attribute) # => [:email, :name]
+person = Person.new(age: 5)
+person.double_attributes
+person.age # => 10
 ```
 
-## Internals
+## Development
 
-If you want to register your own macros, you can do so with `AttributeExtras.register_extra`. Internally `attribute_extras` does this for the three macros listed above.
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-### `:nullify` Example
+To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
-```ruby
-AttributeExtras.configure do |config|
-  config.register_extra :nullify, ->(value, options){ value.presence },
-    past: :nullified,
-    validator: { format: { allow_nil: true, without: /\A\s*\z/ } }
-end
-```
+## Contributing
 
-### `:truncate` Example
+Bug reports and pull requests are welcome on GitHub at https://github.com/kddeisz/attribute_extras.
 
-```ruby
-AttributeExtras.configure do |config|
-  config.register_extra :truncate, ->(value, options){ value.is_a?(String) ? value[0...options[:limit]] : value },
-    past: :truncated,
-    validator: ->(options){ { length: { maximum: options[:limit] } } },
-    options: ->(attribute){ { limit: self.columns_hash[attribute.to_s].limit } }
-end
-```
+## License
 
-In this case the options is needed to build a hash of metadata about the attribute in question so that the validator option can change. The options hash is also passed in to the `truncate_attribute_extra` method so that you have access to that metadata.
-
-## Additional information
-
-### Contributing
-
-Contributions welcome! Please submit a pull request with tests.
-
-### License
-
-MIT License.
+The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
