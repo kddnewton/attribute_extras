@@ -7,14 +7,14 @@ class MacroTest < Minitest::Test
     assert_includes AttributeExtras.constants, :StripAttributes
 
     user = User.create(first_name: '  Harry  ', last_name: '  Potter  ')
-    assert_equal 'Harry Potter', "#{user.first_name} #{user.last_name}"
+    assert_equal 'Harry Potter', user.full_name
 
     user = User.create(first_name: 'Harry', last_name: 'Potter')
-    assert_equal 'Harry Potter', "#{user.first_name} #{user.last_name}"
+    assert_equal 'Harry Potter', user.full_name
 
     user = User.new(first_name: '  Harry  ', last_name: '  Potter  ')
     user.strip_attributes
-    assert_equal 'Harry Potter', "#{user.first_name} #{user.last_name}"
+    assert_equal 'Harry Potter', user.full_name
   end
 
   def test_nullify

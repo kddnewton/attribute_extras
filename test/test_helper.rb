@@ -33,4 +33,8 @@ class User < ActiveRecord::Base
   strip_attributes :first_name, :last_name
   nullify_attributes :title
   truncate_attributes :status
+
+  def full_name
+    "#{first_name} #{last_name}"
+  end
 end
