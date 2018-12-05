@@ -2,6 +2,9 @@
 
 ENV['RAILS_ENV'] = 'test'
 
+require 'simplecov'
+SimpleCov.start
+
 require 'benchmark'
 require 'active_record'
 
