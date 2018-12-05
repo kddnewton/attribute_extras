@@ -62,7 +62,7 @@ DEPENDENCIES
   minitest (~> 5.0)
   rake (~> 12.3)
   rubocop (~> 0.60)
-  simplecov
+  simplecov (~> 0.16)
   sqlite3
 
 BUNDLED WITH
