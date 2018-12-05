@@ -21,6 +21,7 @@ ActiveRecord::Schema.define do
     t.string :last_name
     t.string :title
     t.string :status, limit: 8
+    t.integer :age
   end
 end
 

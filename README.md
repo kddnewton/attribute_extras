@@ -1,6 +1,6 @@
 # AttributeExtras
 
-Use this gem for automatic behavior on attributes. It provides three class macros that can be used for managing attributes: `nullify_attributes`, `strip_attributes`, and `truncate_attributes`.
+Use this gem for automatic behavior on attributes performed before validation. You can use the predefined macros or define your own.
 
 ## Installation
 
@@ -20,7 +20,9 @@ Or install it yourself as:
 
 ## Usage
 
-### nullify_attributes
+`AttributeExtras` provides three extras that are predefined: `nullify_attributes`, `strip_attributes`, and `truncate_attributes`. You can use these methods to tell `AttributeExtras` to perform mutations before validation. Additionally, you can call these methods at any time to perform the mutation programmatically. Examples are below:
+
+### `ActiveRecord::Base::nullify_attributes`
 
 Sets the value to `nil` if the value is blank.
 
@@ -31,9 +33,13 @@ end
 
 person = Person.create(name: '   ')
 person.name # => nil
+
+person = Person.new(name: '   ')
+person.nullify_attributes
+person.name # => nil
 ```
 
-### strip_attributes
+### `ActiveRecord::Base::strip_attributes`
 
 Strips the value.
 
@@ -44,9 +50,13 @@ end
 
 person = Person.create(name: '   value   ')
 person.name # => 'value'
+
+person = Person.new(name: '   value   ')
+person.strip_attributes
+person.name # => 'value'
 ```
 
-### truncate_attributes
+### `ActiveRecord::Base::truncate_attributes`
 
 Truncates the value to the maximum length allowed by the column.
 
@@ -55,8 +65,33 @@ class Person < ActiveRecord::Base
   truncate_attributes :name
 end
 
-person = Person.new(name: 'a' * 500)
+person = Person.create(name: 'a' * 500)
 person.name # => 'a' * limit
+
+person = Person.new(name: 'a' * 500)
+person.truncate_attributes
+person.name # => 'a' * limit
+```
+
+### `AttributeExtras::define_macro`
+
+You can define your own macros by using the `define_macro` method on the `AttributeExtras` module. `define_macro` a name for the macro and a block which itself accepts three arguments (the record being modified, the attribute being modified, and the value of the attribute). The block should return the modified value. An example would be:
+
+```ruby
+AttributeExtras.define_macro :double_attributes do |_record, _attribute, value|
+  value * 2
+end
+
+class Person < ActiveRecord::Base
+  double_attributes :age
+end
+
+person = Person.create(age: 5)
+person.age # => 10
+
+person = Person.new(age: 5)
+person.double_attributes
+person.age # => 10
 ```
 
 ## Development

@@ -4,93 +4,51 @@ require 'attribute_extras/version'
 
 # Extra macros for auto attribute manipulation.
 module AttributeExtras
-  # Sets the value to `nil` if the value is blank.
-  class NullifyAttributes < Module
-    attr_reader :attributes
+  # Parent class of the various extras.
+  class AttributeExtra < Module
+    attr_reader :name
 
-    def initialize(attributes)
-      @attributes = attributes
+    def initialize(name, attributes, perform)
+      @name = name
+      define_extra(name, attributes, perform)
     end
 
-    def included(base)
-      nullified_attributes = attributes
-
-      base.before_validation do
-        nullified_attributes.each do |attribute|
-          value = public_send(attribute)
-
-          public_send(:"#{attribute}=", value.presence)
-        end
-      end
-    end
-  end
-
-  # Strips the value.
-  class StripAttributes < Module
-    attr_reader :attributes
-
-    def initialize(attributes)
-      @attributes = attributes
-    end
-
-    def included(base)
-      stripped_attributes = attributes
-
-      base.before_validation do
-        stripped_attributes.each do |attribute|
-          value = public_send(attribute)
-          stripped = value.is_a?(String) ? value.strip : value
-
-          public_send(:"#{attribute}=", stripped)
-        end
-      end
-    end
-  end
-
-  # Truncates the value to the maximum length allowed by the column.
-  class TruncateAttributes < Module
-    attr_reader :attributes
-
-    def initialize(attributes)
-      @attributes = attributes
-    end
-
-    def included(base)
-      truncated_attributes = attribute_limits_for(base)
-
-      base.before_validation do
-        truncated_attributes.each do |attribute, limit|
-          value = public_send(attribute)
-          truncated = value.is_a?(String) ? value[0...limit] : value
-
-          public_send(:"#{attribute}=", truncated)
-        end
-      end
+    def included(clazz)
+      clazz.before_validation(name)
     end
 
     private
 
-    def attribute_limits_for(base)
-      attributes.each_with_object({}) do |attribute, limits|
-        limits[attribute] = base.columns_hash[attribute.to_s].limit
+    def define_extra(name, attributes, perform)
+      define_method(name) do
+        attributes.each do |attribute|
+          value = public_send(attribute)
+          public_send(:"#{attribute}=", perform[self, attribute, value])
+        end
       end
     end
   end
 
-  # Methods added the ActiveRecord models.
-  module Hook
-    def nullify_attributes(*attributes)
-      include NullifyAttributes.new(attributes)
-    end
+  def self.define_extra(name, &perform)
+    extra = Class.new(AttributeExtra)
+    extra_name = name.to_s.gsub(/(?:\A|_)([a-z])/i) { $1.upcase }.to_sym
 
-    def strip_attributes(*attributes)
-      include StripAttributes.new(attributes)
-    end
-
-    def truncate_attributes(*attributes)
-      include TruncateAttributes.new(attributes)
+    AttributeExtras.const_set(extra_name, extra)
+    ActiveRecord::Base.define_singleton_method(name) do |*attributes|
+      include extra.new(name, attributes, perform)
     end
   end
-end
 
-ActiveRecord::Base.extend(AttributeExtras::Hook)
+  define_extra :nullify_attributes do |*, value|
+    value.presence
+  end
+
+  define_extra :strip_attributes do |*, value|
+    value.is_a?(String) ? value.strip : value
+  end
+
+  define_extra :truncate_attributes do |record, attribute, value|
+    limit = record.class.columns_hash[attribute.to_s].limit
+    value.is_a?(String) ? value[0...limit] : value
+  end
+end
