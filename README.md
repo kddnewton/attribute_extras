@@ -22,7 +22,7 @@ Or install it yourself as:
 
 ### nullify_attributes
 
-Causes attribute assignment to check for presence of the given value, and set the value accordingly.
+Sets the value to `nil` if the value is blank.
 
 ```ruby
 class Person < ActiveRecord::Base
@@ -35,7 +35,7 @@ person.name # => nil
 
 ### strip_attributes
 
-Causes string attribute assignment to strip the given value, and set the value accordingly.
+Strips the value.
 
 ```ruby
 class Person < ActiveRecord::Base
@@ -48,7 +48,7 @@ person.name # => 'value'
 
 ### truncate_attributes
 
-Causes string attribute assignment to be truncated down to the maximum allowed value for that column.
+Truncates the value to the maximum length allowed by the column.
 
 ```ruby
 class Person < ActiveRecord::Base
