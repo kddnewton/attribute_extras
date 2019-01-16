@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/kddeisz/attribute_extras.svg?branch=master)](https://travis-ci.org/kddeisz/attribute_extras)
 [![Gem](https://img.shields.io/gem/v/attribute_extras.svg)](https://rubygems.org/gems/attribute_extras)
 
-Use this gem for automatic behavior on attributes performed before validation. You can use the predefined macros or define your own.
+Use this gem for automatic behavior on attributes performed before validation. You can use the predefined extras or define your own.
 
 ## Installation
 
@@ -76,12 +76,12 @@ person.truncate_attributes
 person.name # => 'a' * limit
 ```
 
-### `AttributeExtras::define_macro`
+### `AttributeExtras::define_extra`
 
-You can define your own macros by using the `define_macro` method on the `AttributeExtras` module. `define_macro` a name for the macro and a block which itself accepts three arguments (the record being modified, the attribute being modified, and the value of the attribute). The block should return the modified value. An example would be:
+You can define your own extras by using the `define_extra` method on the `AttributeExtras` module. `define_extra` takes a name for the extra and a block which itself accepts three arguments (the record being modified, the attribute being modified, and the value of the attribute). The block should return the modified value. An example would be:
 
 ```ruby
-AttributeExtras.define_macro :double_attributes do |_record, _attribute, value|
+AttributeExtras.define_extra :double_attributes do |_record, _attribute, value|
   value * 2
 end
 
