@@ -4,7 +4,7 @@ lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'attribute_extras/version'
 
-Gem::Specification.new do |spec| # rubocop:disable Metrics/BlockLength
+Gem::Specification.new do |spec|
   spec.name          = 'attribute_extras'
   spec.version       = AttributeExtras::VERSION
   spec.authors       = ['Kevin Deisz']
@@ -33,7 +33,8 @@ Gem::Specification.new do |spec| # rubocop:disable Metrics/BlockLength
   spec.add_development_dependency 'bundler', '~> 2.0'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'rake', '~> 12.3'
-  spec.add_development_dependency 'rubocop', '~> 0.63'
+  spec.add_development_dependency 'rubocop', '~> 0.67'
+  spec.add_development_dependency 'rubocop-performance', '~> 1.1'
   spec.add_development_dependency 'simplecov', '~> 0.16'
-  spec.add_development_dependency 'sqlite3', '~> 1.3'
+  spec.add_development_dependency 'sqlite3', '~> 1.4'
 end
