@@ -1,6 +1,6 @@
 # AttributeExtras
 
-[![Build Status](https://travis-ci.org/kddeisz/attribute_extras.svg?branch=master)](https://travis-ci.org/kddeisz/attribute_extras)
+[![Build Status](https://travis-ci.com/kddeisz/attribute_extras.svg?branch=master)](https://travis-ci.com/kddeisz/attribute_extras)
 [![Gem](https://img.shields.io/gem/v/attribute_extras.svg)](https://rubygems.org/gems/attribute_extras)
 
 Use this gem for automatic behavior on attributes performed before validation. You can use the predefined extras or define your own.
