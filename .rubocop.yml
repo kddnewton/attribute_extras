@@ -1,9 +1,2 @@
-AllCops:
-  DisplayCopNames: true
-  DisplayStyleGuide: true
-  TargetRubyVersion: 2.6
-  Exclude:
-  - 'vendor/**/*'
-
-Style/PerlBackrefs:
-  Enabled: false
+inherit_gem:
+  rb: config/rubocop.yml
