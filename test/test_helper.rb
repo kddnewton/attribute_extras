@@ -13,7 +13,7 @@ ActiveRecord::Base.establish_connection(
   database: ':memory:'
 )
 
-ActiveRecord::Base.logger = Logger.new(STDOUT)
+ActiveRecord::Base.logger = Logger.new($stdout)
 
 ActiveRecord::Schema.define do
   create_table :users, force: true do |t|

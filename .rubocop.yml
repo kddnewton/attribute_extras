@@ -15,6 +15,9 @@ Layout/LineLength:
 Lint/AmbiguousBlockAssociation:
   Enabled: false
 
+Lint/MissingSuper:
+  Enabled: false
+
 Naming/RescuedExceptionsVariableName:
   Enabled: false
 
