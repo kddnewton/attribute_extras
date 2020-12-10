@@ -7,12 +7,12 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activemodel (6.1.0.rc2)
-      activesupport (= 6.1.0.rc2)
-    activerecord (6.1.0.rc2)
-      activemodel (= 6.1.0.rc2)
-      activesupport (= 6.1.0.rc2)
-    activesupport (6.1.0.rc2)
+    activemodel (6.1.0)
+      activesupport (= 6.1.0)
+    activerecord (6.1.0)
+      activemodel (= 6.1.0)
+      activesupport (= 6.1.0)
+    activesupport (6.1.0)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
