@@ -7,8 +7,8 @@ require 'attribute_extras/version'
 Gem::Specification.new do |spec|
   spec.name          = 'attribute_extras'
   spec.version       = AttributeExtras::VERSION
-  spec.authors       = ['Kevin Deisz']
-  spec.email         = ['kevin.deisz@gmail.com']
+  spec.authors       = ['Kevin Newton']
+  spec.email         = ['kddnewton@gmail.com']
 
   spec.summary       = 'Extra macros for auto attribute manipulation.'
   spec.description   = <<~DOC
