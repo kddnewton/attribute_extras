@@ -17,5 +17,5 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - All of the introspection methods.
 
-[Unreleased]: https://github.com/kddeisz/attribute_extras/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/kddeisz/attribute_extras/compare/ccda61...v1.0.0
+[Unreleased]: https://github.com/kddnewton/attribute_extras/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/kddnewton/attribute_extras/compare/ccda61...v1.0.0

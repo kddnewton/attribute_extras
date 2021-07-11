@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
   spec.description   = <<~DOC
     Builds macros to automatically manipulate your models' attributes.
   DOC
-  spec.homepage      = 'https://github.com/kddeisz/attribute_extras'
+  spec.homepage      = 'https://github.com/kddnewton/attribute_extras'
   spec.license       = 'MIT'
 
   spec.files         =

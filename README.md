@@ -1,6 +1,6 @@
 # AttributeExtras
 
-[![Build Status](https://github.com/kddeisz/attribute_extras/workflows/Main/badge.svg)](https://github.com/kddeisz/attribute_extras/actions)
+[![Build Status](https://github.com/kddnewton/attribute_extras/workflows/Main/badge.svg)](https://github.com/kddnewton/attribute_extras/actions)
 [![Gem](https://img.shields.io/gem/v/attribute_extras.svg)](https://rubygems.org/gems/attribute_extras)
 
 Use this gem for automatic behavior on attributes performed before validation. You can use the predefined extras or define your own.
@@ -105,7 +105,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/kddeisz/attribute_extras.
+Bug reports and pull requests are welcome on GitHub at https://github.com/kddnewton/attribute_extras.
 
 ## License
 
