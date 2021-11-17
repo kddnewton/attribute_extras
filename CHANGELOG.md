@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [1.0.1] - 2021-11-17
+
+### Changed
+
+- Require MFA for releasing.
+
 ## [1.0.0] - 2018-12-05
 
 ### Changed

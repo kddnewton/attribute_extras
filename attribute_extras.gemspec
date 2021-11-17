@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
-lib = File.expand_path('lib', __dir__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'attribute_extras/version'
+require_relative 'lib/attribute_extras/version'
+
+version = AttributeExtras::VERSION
+repository = 'https://github.com/kddnewton/attribute_extras'
 
 Gem::Specification.new do |spec|
   spec.name          = 'attribute_extras'
-  spec.version       = AttributeExtras::VERSION
+  spec.version       = version
   spec.authors       = ['Kevin Newton']
   spec.email         = ['kddnewton@gmail.com']
 
@@ -14,8 +15,15 @@ Gem::Specification.new do |spec|
   spec.description   = <<~DOC
     Builds macros to automatically manipulate your models' attributes.
   DOC
-  spec.homepage      = 'https://github.com/kddnewton/attribute_extras'
+  spec.homepage      = repository
   spec.license       = 'MIT'
+
+  spec.metadata      = {
+    'bug_tracker_uri' => "#{repository}/issues",
+    'changelog_uri' => "#{repository}/blob/v#{version}/CHANGELOG.md",
+    'source_code_uri' => repository,
+    'rubygems_mfa_required' => 'true'
+  }
 
   spec.files         =
     Dir.chdir(__dir__) do
