@@ -10,7 +10,7 @@ Use this gem for automatic behavior on attributes performed before validation. Y
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'attribute_extras'
+gem "attribute_extras"
 ```
 
 And then execute:

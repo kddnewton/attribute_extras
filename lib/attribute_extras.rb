@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'attribute_extras/version'
+require "attribute_extras/version"
 
 # Extra macros for auto attribute manipulation.
 module AttributeExtras

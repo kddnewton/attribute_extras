@@ -1,32 +1,32 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 class MacroTest < Minitest::Test
   def test_strip
     assert_includes AttributeExtras.constants, :StripAttributes
 
-    user = User.create(first_name: '  Harry  ', last_name: '  Potter  ')
-    assert_equal 'Harry Potter', user.full_name
+    user = User.create(first_name: "  Harry  ", last_name: "  Potter  ")
+    assert_equal "Harry Potter", user.full_name
 
-    user = User.create(first_name: 'Harry', last_name: 'Potter')
-    assert_equal 'Harry Potter', user.full_name
+    user = User.create(first_name: "Harry", last_name: "Potter")
+    assert_equal "Harry Potter", user.full_name
 
-    user = User.new(first_name: '  Harry  ', last_name: '  Potter  ')
+    user = User.new(first_name: "  Harry  ", last_name: "  Potter  ")
     user.strip_attributes
-    assert_equal 'Harry Potter', user.full_name
+    assert_equal "Harry Potter", user.full_name
   end
 
   def test_nullify
     assert_includes AttributeExtras.constants, :NullifyAttributes
 
-    user = User.create(title: 'Student')
-    assert_equal 'Student', user.title
+    user = User.create(title: "Student")
+    assert_equal "Student", user.title
 
-    user = User.create(title: '')
+    user = User.create(title: "")
     assert_nil user.title
 
-    user = User.new(title: '')
+    user = User.new(title: "")
     user.nullify_attributes
     assert_nil user.title
   end
@@ -34,15 +34,15 @@ class MacroTest < Minitest::Test
   def test_truncate
     assert_includes AttributeExtras.constants, :TruncateAttributes
 
-    user = User.create(status: 'Hunting horcruxes')
-    assert_equal 'Hunting ', user.status
+    user = User.create(status: "Hunting horcruxes")
+    assert_equal "Hunting ", user.status
 
-    user = User.create(status: 'Hunting')
-    assert_equal 'Hunting', user.status
+    user = User.create(status: "Hunting")
+    assert_equal "Hunting", user.status
 
-    user = User.new(status: 'Hunting horcruxes')
+    user = User.new(status: "Hunting horcruxes")
     user.truncate_attributes
-    assert_equal 'Hunting ', user.status
+    assert_equal "Hunting ", user.status
   end
 
   def test_define_macro

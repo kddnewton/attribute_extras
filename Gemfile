@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
 gemspec
 
-gem 'activerecord', '>= 6.0.0.beta1'
+gem "activerecord", ">= 6.0.0.beta1"

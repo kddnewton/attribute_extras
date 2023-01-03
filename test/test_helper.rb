@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-ENV['RAILS_ENV'] = 'test'
+ENV["RAILS_ENV"] = "test"
 
-require 'simplecov'
+require "simplecov"
 SimpleCov.start
 
-require 'benchmark'
-require 'active_record'
+require "benchmark"
+require "active_record"
 
 ActiveRecord::Base.establish_connection(
-  adapter: 'sqlite3',
-  database: ':memory:'
+  adapter: "sqlite3",
+  database: ":memory:"
 )
 
 ActiveRecord::Base.logger = Logger.new($stdout)
@@ -25,9 +25,9 @@ ActiveRecord::Schema.define do
   end
 end
 
-$LOAD_PATH.unshift File.expand_path('../lib', __dir__)
-require 'attribute_extras'
-require 'minitest/autorun'
+$LOAD_PATH.unshift File.expand_path("../lib", __dir__)
+require "attribute_extras"
+require "minitest/autorun"
 
 class User < ActiveRecord::Base
   strip_attributes :first_name, :last_name
