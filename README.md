@@ -1,3 +1,5 @@
+DEPRECATED! Use [ActiveRecord::Base::normalizes](https://edgeapi.rubyonrails.org/classes/ActiveRecord/Normalization/ClassMethods.html#method-i-normalizes) instead.
+
 # AttributeExtras
 
 [![Build Status](https://github.com/kddnewton/attribute_extras/workflows/Main/badge.svg)](https://github.com/kddnewton/attribute_extras/actions)
